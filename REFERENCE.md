@@ -90,7 +90,7 @@ The following parameters are available in the `unbound` class:
 * [`do_tcp`](#do_tcp)
 * [`tcp_mss`](#tcp_mss)
 * [`tls_cert_bundle`](#tls_cert_bundle)
-* [`tls_upstreami`](#tls_upstreami)
+* [`tls_upstream`](#tls_upstream)
 * [`outgoing_tcp_mss`](#outgoing_tcp_mss)
 * [`tcp_idle_timeout`](#tcp_idle_timeout)
 * [`edns_tcp_keepalive`](#edns_tcp_keepalive)
@@ -107,6 +107,8 @@ The following parameters are available in the `unbound` class:
 * [`do_daemonize`](#do_daemonize)
 * [`access_control`](#access_control)
 * [`chroot`](#chroot)
+* [`username`](#username)
+* [`directory`](#directory)
 * [`logfile`](#logfile)
 * [`log_identity`](#log_identity)
 * [`log_time_ascii`](#log_time_ascii)
@@ -145,7 +147,9 @@ The following parameters are available in the `unbound` class:
 * [`minimal_responses`](#minimal_responses)
 * [`disable_dnssec_lame_check`](#disable_dnssec_lame_check)
 * [`trust_anchor_file`](#trust_anchor_file)
+* [`auto_trust_anchor_file`](#auto_trust_anchor_file)
 * [`trust_anchor`](#trust_anchor)
+* [`trusted_keys_file`](#trusted_keys_file)
 * [`trust_anchor_signaling`](#trust_anchor_signaling)
 * [`domain_insecure`](#domain_insecure)
 * [`val_sig_skew_min`](#val_sig_skew_min)
@@ -191,9 +195,9 @@ The following parameters are available in the `unbound` class:
 * [`stub`](#stub)
 * [`record`](#record)
 * [`access`](#access)
-* [`confdir`](#confdir)
-* [`directory`](#directory)
+* [`anchor_fetch_command`](#anchor_fetch_command)
 * [`conf_d`](#conf_d)
+* [`confdir`](#confdir)
 * [`config_file`](#config_file)
 * [`control_enable`](#control_enable)
 * [`control_setup_path`](#control_setup_path)
@@ -201,17 +205,14 @@ The following parameters are available in the `unbound` class:
 * [`fetch_client`](#fetch_client)
 * [`group`](#group)
 * [`keys_d`](#keys_d)
-* [`trusted_keys_file`](#trusted_keys_file)
 * [`module_config`](#module_config)
 * [`owner`](#owner)
-* [`username`](#username)
 * [`package_name`](#package_name)
+* [`package_provider`](#package_provider)
 * [`package_ensure`](#package_ensure)
 * [`purge_unbound_conf_d`](#purge_unbound_conf_d)
 * [`root_hints_url`](#root_hints_url)
 * [`runtime_dir`](#runtime_dir)
-* [`auto_trust_anchor_file`](#auto_trust_anchor_file)
-* [`anchor_fetch_command`](#anchor_fetch_command)
 * [`service_name`](#service_name)
 * [`service_hasstatus`](#service_hasstatus)
 * [`service_ensure`](#service_ensure)
@@ -247,7 +248,7 @@ The following parameters are available in the `unbound` class:
 
 ##### <a name="hints_file"></a>`hints_file`
 
-Data type: `Unbound::Hints_file`
+Data type: `Variant[Enum['builtin'], Stdlib::Absolutepath]`
 
 File path to the root-hints. Set to 'builtin' to remove root-hint option from unbound.conf and use built-in hints.
 
@@ -311,11 +312,11 @@ Default value: `53`
 
 ##### <a name="interface"></a>`interface`
 
-Data type: `Array[String[1]]`
+Data type: `Optional[Array[String]]`
 
 
 
-Default value: `[]`
+Default value: ``undef``
 
 ##### <a name="interface_automatic"></a>`interface_automatic`
 
@@ -327,11 +328,11 @@ Default value: ``false``
 
 ##### <a name="outgoing_interface"></a>`outgoing_interface`
 
-Data type: `Array[String[1]]`
+Data type: `Optional[Array[String]]`
 
 
 
-Default value: `[]`
+Default value: ``undef``
 
 ##### <a name="outgoing_range"></a>`outgoing_range`
 
@@ -347,7 +348,7 @@ Data type: `Unbound::Range`
 
 
 
-Default value: `'32768-65535'`
+Default value: `32768-65535`
 
 ##### <a name="outgoing_port_avoid"></a>`outgoing_port_avoid`
 
@@ -355,7 +356,7 @@ Data type: `Unbound::Range`
 
 
 
-Default value: `'0-32767'`
+Default value: `0-32767`
 
 ##### <a name="outgoing_port_permit_first"></a>`outgoing_port_permit_first`
 
@@ -567,11 +568,11 @@ Default value: ``undef``
 
 ##### <a name="define_tag"></a>`define_tag`
 
-Data type: `Array[String[1]]`
+Data type: `Optional[Array[String]]`
 
 
 
-Default value: `[]`
+Default value: ``undef``
 
 ##### <a name="do_ip4"></a>`do_ip4`
 
@@ -629,7 +630,7 @@ Data type: `Optional[Stdlib::Absolutepath]`
 
 Default value: ``undef``
 
-##### <a name="tls_upstreami"></a>`tls_upstreami`
+##### <a name="tls_upstream"></a>`tls_upstream`
 
 Data type: `Boolean`
 
@@ -719,7 +720,7 @@ Default value: ``undef``
 
 ##### <a name="tls_ciphers"></a>`tls_ciphers`
 
-Data type: `Optional[String[1]]`
+Data type: `Optional[String]`
 
 
 
@@ -727,7 +728,7 @@ Default value: ``undef``
 
 ##### <a name="tls_ciphersuites"></a>`tls_ciphersuites`
 
-Data type: `Optional[String[1]]`
+Data type: `Optional[String]`
 
 
 
@@ -751,19 +752,44 @@ Default value: ``true``
 
 ##### <a name="access_control"></a>`access_control`
 
-Data type: `Hash[String[1], Unbound::Access_control]`
-
-
-
-Default value: `{}`
-
-##### <a name="chroot"></a>`chroot`
-
-Data type: `Optional[Unbound::Chroot]`
+Data type: `Optional[Hash[String, Unbound::Access_control]]`
 
 
 
 Default value: ``undef``
+
+##### <a name="chroot"></a>`chroot`
+
+Data type: `Optional[Variant[Enum[''],Stdlib::Absolutepath]]`
+
+
+
+Default value: ``undef``
+
+<details>
+  <summary>Hiera overrides in a detailed table</summary>
+
+  | Filename | Interpolations | Value |
+  |----------|----------------|-------|
+  | `data/os/RedHat.yaml` | `facts.os.family`: `RedHat` | `` |
+
+</details>
+
+##### <a name="username"></a>`username`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `%{hiera('unbound::owner')}`
+
+##### <a name="directory"></a>`directory`
+
+Data type: `Stdlib::Absolutepath`
+
+
+
+Default value: `%{hiera('unbound::confdir')}`
 
 ##### <a name="logfile"></a>`logfile`
 
@@ -775,7 +801,7 @@ Default value: ``undef``
 
 ##### <a name="log_identity"></a>`log_identity`
 
-Data type: `Optional[String[1]]`
+Data type: `Optional[String]`
 
 
 
@@ -831,11 +857,23 @@ Default value: ``false``
 
 ##### <a name="pidfile"></a>`pidfile`
 
-Data type: `Stdlib::Absolutepath`
+Data type: `Optional[Stdlib::Absolutepath]`
 
 
 
-Default value: `'/var/run/unbound/unbound.pid'`
+Default value: `/var/run/unbound/unbound.pid`
+
+<details>
+  <summary>Hiera overrides in a detailed table</summary>
+
+  | Filename | Interpolations | Value |
+  |----------|----------------|-------|
+  | `data/os/Solaris/SmartOS.yaml` | `facts.os.family`: `Solaris`<br>`facts.os.release.major`: `SmartOS` | `/usr/local/etc/unbound/unbound.pid` |
+  | `data/os/OpenBSD.yaml` | `facts.os.family`: `OpenBSD` | `/var/run/unbound.pid` |
+  | `data/os/FreeBSD.yaml` | `facts.os.family`: `FreeBSD` | `/usr/local/etc/unbound/unbound.pid` |
+  | `data/os/Debian.yaml` | `facts.os.family`: `Debian` | `/run/unbound.pid` |
+
+</details>
 
 ##### <a name="hide_identity"></a>`hide_identity`
 
@@ -847,7 +885,7 @@ Default value: ``true``
 
 ##### <a name="identity"></a>`identity`
 
-Data type: `Optional[String[1]]`
+Data type: `Optional[String]`
 
 
 
@@ -863,7 +901,7 @@ Default value: ``true``
 
 ##### <a name="version"></a>`version`
 
-Data type: `Optional[String[1]]`
+Data type: `Optional[String]`
 
 
 
@@ -879,11 +917,11 @@ Default value: ``true``
 
 ##### <a name="target_fetch_policy"></a>`target_fetch_policy`
 
-Data type: `Array[Integer]`
+Data type: `Optional[Array[Integer]]`
 
 
 
-Default value: `[]`
+Default value: ``undef``
 
 ##### <a name="harden_short_bufsize"></a>`harden_short_bufsize`
 
@@ -951,11 +989,11 @@ Default value: ``false``
 
 ##### <a name="caps_whitlist"></a>`caps_whitlist`
 
-Data type: `Array[String[1]]`
+Data type: `Optional[Array[String]]`
 
 
 
-Default value: `[]`
+Default value: ``undef``
 
 ##### <a name="qname_minimisation"></a>`qname_minimisation`
 
@@ -975,19 +1013,19 @@ Default value: ``false``
 
 ##### <a name="private_address"></a>`private_address`
 
-Data type: `Array[String[1]]`
+Data type: `Optional[Array[String]]`
 
 
 
-Default value: `[]`
+Default value: ``undef``
 
 ##### <a name="private_domain"></a>`private_domain`
 
-Data type: `Array[String[1]]`
+Data type: `Optional[Array[String]]`
 
 
 
-Default value: `[]`
+Default value: ``undef``
 
 ##### <a name="unwanted_reply_threshold"></a>`unwanted_reply_threshold`
 
@@ -999,11 +1037,11 @@ Default value: `10000000`
 
 ##### <a name="do_not_query_address"></a>`do_not_query_address`
 
-Data type: `Array[String[1]]`
+Data type: `Optional[Array[String]]`
 
 
 
-Default value: `[]`
+Default value: ``undef``
 
 ##### <a name="do_not_query_localhost"></a>`do_not_query_localhost`
 
@@ -1069,13 +1107,29 @@ Data type: `Optional[Stdlib::Absolutepath]`
 
 Default value: ``undef``
 
+##### <a name="auto_trust_anchor_file"></a>`auto_trust_anchor_file`
+
+Data type: `Stdlib::Absolutepath`
+
+
+
+Default value: `%{hiera('unbound::runtime_dir')}/root.key`
+
 ##### <a name="trust_anchor"></a>`trust_anchor`
 
-Data type: `Array[String[1]]`
+Data type: `Optional[Array[String]]`
 
 
 
-Default value: `[]`
+Default value: ``undef``
+
+##### <a name="trusted_keys_file"></a>`trusted_keys_file`
+
+Data type: `Stdlib::Absolutepath`
+
+
+
+Default value: `%{hiera('unbound::keys_d')}/*.key`
 
 ##### <a name="trust_anchor_signaling"></a>`trust_anchor_signaling`
 
@@ -1087,11 +1141,11 @@ Default value: ``true``
 
 ##### <a name="domain_insecure"></a>`domain_insecure`
 
-Data type: `Array[String[1]]`
+Data type: `Optional[Array[String]]`
 
 
 
-Default value: `[]`
+Default value: ``undef``
 
 ##### <a name="val_sig_skew_min"></a>`val_sig_skew_min`
 
@@ -1191,11 +1245,11 @@ Default value: ``undef``
 
 ##### <a name="val_nsec3_keysize_iterations"></a>`val_nsec3_keysize_iterations`
 
-Data type: `Array[Integer[1]]`
+Data type: `Optional[Array[Integer[1]]]`
 
 
 
-Default value: `[]`
+Default value: ``undef``
 
 ##### <a name="add_holddown"></a>`add_holddown`
 
@@ -1271,43 +1325,43 @@ Default value: ``false``
 
 ##### <a name="local_zone"></a>`local_zone`
 
-Data type: `Unbound::Local_zone`
+Data type: `Optional[Unbound::Local_zone]`
 
 
 
-Default value: `{}`
+Default value: ``undef``
 
 ##### <a name="local_data"></a>`local_data`
 
-Data type: `Optional[Array[String[1]]]`
+Data type: `Optional[Array[String]]`
 
 
 
-Default value: `[]`
+Default value: ``undef``
 
 ##### <a name="local_data_ptr"></a>`local_data_ptr`
 
-Data type: `Optional[Array[String[1]]]`
+Data type: `Optional[Array[String]]`
 
 
 
-Default value: `[]`
+Default value: ``undef``
 
 ##### <a name="local_zone_tag"></a>`local_zone_tag`
 
-Data type: `Hash[String[1], Array[String[1]]]`
+Data type: `Optional[Hash[String, Array[String]]]`
 
 
 
-Default value: `{}`
+Default value: ``undef``
 
 ##### <a name="local_zone_override"></a>`local_zone_override`
 
-Data type: `Hash[String[1], Unbound::Local_zone_override]`
+Data type: `Optional[Hash[String, Unbound::Local_zone_override]]`
 
 
 
-Default value: `{}`
+Default value: ``undef``
 
 ##### <a name="ratelimit"></a>`ratelimit`
 
@@ -1343,19 +1397,19 @@ Default value: ``undef``
 
 ##### <a name="ratelimit_for_domain"></a>`ratelimit_for_domain`
 
-Data type: `Hash[String[1], Integer[0]]`
+Data type: `Optional[Hash[String,Integer[0]]]`
 
 
 
-Default value: `{}`
+Default value: ``undef``
 
 ##### <a name="ratelimit_below_domain"></a>`ratelimit_below_domain`
 
-Data type: `Hash[String[1], Integer[0]]`
+Data type: `Optional[Hash[String,Integer[0]]]`
 
 
 
-Default value: `{}`
+Default value: ``undef``
 
 ##### <a name="ip_ratelimit"></a>`ip_ratelimit`
 
@@ -1435,39 +1489,60 @@ Data type: `Array`
 
 
 
-Default value: `['::1', '127.0.0.1']`
+Default value: `["::1", "127.0.0.1/8"]`
 
-##### <a name="confdir"></a>`confdir`
+##### <a name="anchor_fetch_command"></a>`anchor_fetch_command`
 
-Data type: `String[1]`
-
-
-
-Default value: `'/etc/unbound'`
-
-##### <a name="directory"></a>`directory`
-
-Data type: `Stdlib::Absolutepath`
+Data type: `String`
 
 
 
-Default value: `$confdir`
+Default value: `unbound-anchor -a %{hiera('unbound::auto_trust_anchor_file')}`
+
+<details>
+  <summary>Hiera overrides in a detailed table</summary>
+
+  | Filename | Interpolations | Value |
+  |----------|----------------|-------|
+  | `data/os/Solaris/SmartOS.yaml` | `facts.os.family`: `Solaris`<br>`facts.os.release.major`: `SmartOS` | `/opt/local/sbin/unbound-anchor -a %{hiera('unbound::auto_trust_anchor_file')}` |
+
+</details>
 
 ##### <a name="conf_d"></a>`conf_d`
 
-Data type: `String[1]`
+Data type: `String`
 
 
 
-Default value: `"${confdir}/conf.d"`
+Default value: `%{hiera('unbound::confdir')}/conf.d`
+
+##### <a name="confdir"></a>`confdir`
+
+Data type: `String`
+
+
+
+Default value: `/etc/unbound`
+
+<details>
+  <summary>Hiera overrides in a detailed table</summary>
+
+  | Filename | Interpolations | Value |
+  |----------|----------------|-------|
+  | `data/os/Solaris/SmartOS.yaml` | `facts.os.family`: `Solaris`<br>`facts.os.release.major`: `SmartOS` | `/opt/local/etc/unbound` |
+  | `data/os/OpenBSD.yaml` | `facts.os.family`: `OpenBSD` | `/var/unbound/etc` |
+  | `data/os/Darwin.yaml` | `facts.os.family`: `Darwin` | `/opt/local/etc/unbound` |
+  | `data/os/FreeBSD.yaml` | `facts.os.family`: `FreeBSD` | `/usr/local/etc/unbound` |
+
+</details>
 
 ##### <a name="config_file"></a>`config_file`
 
-Data type: `String[1]`
+Data type: `String`
 
 
 
-Default value: `"${confdir}/unbound.conf"`
+Default value: `%{hiera('unbound::confdir')}/unbound.conf`
 
 ##### <a name="control_enable"></a>`control_enable`
 
@@ -1477,77 +1552,121 @@ Data type: `Boolean`
 
 Default value: ``false``
 
+<details>
+  <summary>Hiera overrides in a detailed table</summary>
+
+  | Filename | Interpolations | Value |
+  |----------|----------------|-------|
+  | `data/os/FreeBSD.yaml` | `facts.os.family`: `FreeBSD` | `true` |
+
+</details>
+
 ##### <a name="control_setup_path"></a>`control_setup_path`
 
-Data type: `String[1]`
+Data type: `String`
 
 
 
-Default value: `'/usr/sbin/unbound-control-setup'`
+Default value: `/usr/sbin/unbound-control-setup`
+
+<details>
+  <summary>Hiera overrides in a detailed table</summary>
+
+  | Filename | Interpolations | Value |
+  |----------|----------------|-------|
+  | `data/os/Solaris/SmartOS.yaml` | `facts.os.family`: `Solaris`<br>`facts.os.release.major`: `SmartOS` | `/opt/local/sbin/unbound-control-setup` |
+  | `data/os/FreeBSD.yaml` | `facts.os.family`: `FreeBSD` | `/usr/local/sbin/unbound-control-setup` |
+
+</details>
 
 ##### <a name="control_path"></a>`control_path`
 
-Data type: `String[1]`
+Data type: `String`
 
 
 
-Default value: `'/usr/sbin/unbound-control'`
+Default value: `/usr/sbin/unbound-control`
+
+<details>
+  <summary>Hiera overrides in a detailed table</summary>
+
+  | Filename | Interpolations | Value |
+  |----------|----------------|-------|
+  | `data/os/Solaris/SmartOS.yaml` | `facts.os.family`: `Solaris`<br>`facts.os.release.major`: `SmartOS` | `/opt/local/sbin/unbound-control` |
+  | `data/os/FreeBSD.yaml` | `facts.os.family`: `FreeBSD` | `/usr/local/sbin/unbound-control` |
+
+</details>
 
 ##### <a name="fetch_client"></a>`fetch_client`
 
-Data type: `String[1]`
+Data type: `String`
 
 
 
-Default value: `'wget -O'`
+Default value: `wget -O`
+
+<details>
+  <summary>Hiera overrides in a detailed table</summary>
+
+  | Filename | Interpolations | Value |
+  |----------|----------------|-------|
+  | `data/os/Solaris/SmartOS.yaml` | `facts.os.family`: `Solaris`<br>`facts.os.release.major`: `SmartOS` | `wget -O` |
+  | `data/os/OpenBSD.yaml` | `facts.os.family`: `OpenBSD` | `ftp -o` |
+  | `data/os/Darwin.yaml` | `facts.os.family`: `Darwin` | `curl -o` |
+  | `data/os/FreeBSD.yaml` | `facts.os.family`: `FreeBSD` | `fetch -o` |
+  | `data/os/RedHat.yaml` | `facts.os.family`: `RedHat` | `curl -o` |
+
+</details>
 
 ##### <a name="group"></a>`group`
 
-Data type: `String[1]`
+Data type: `String`
 
 
 
-Default value: `'unbound'`
+Default value: `unbound`
+
+<details>
+  <summary>Hiera overrides in a detailed table</summary>
+
+  | Filename | Interpolations | Value |
+  |----------|----------------|-------|
+  | `data/os/OpenBSD.yaml` | `facts.os.family`: `OpenBSD` | `_unbound` |
+
+</details>
 
 ##### <a name="keys_d"></a>`keys_d`
 
-Data type: `String[1]`
+Data type: `String`
 
 
 
-Default value: `"${confdir}/keys.d"`
-
-##### <a name="trusted_keys_file"></a>`trusted_keys_file`
-
-Data type: `Stdlib::Absolutepath`
-
-
-
-Default value: `"${keys_d}/*.key"`
+Default value: `%{hiera('unbound::confdir')}/keys.d`
 
 ##### <a name="module_config"></a>`module_config`
 
-Data type: `Array[Unbound::Module]`
+Data type: `Optional[Array[Unbound::Module]]`
 
 
 
-Default value: `[]`
+Default value: ``undef``
 
 ##### <a name="owner"></a>`owner`
 
-Data type: `String[1]`
+Data type: `String`
 
 
 
-Default value: `'unbound'`
+Default value: `unbound`
 
-##### <a name="username"></a>`username`
+<details>
+  <summary>Hiera overrides in a detailed table</summary>
 
-Data type: `String[1]`
+  | Filename | Interpolations | Value |
+  |----------|----------------|-------|
+  | `data/os/OpenBSD.yaml` | `facts.os.family`: `OpenBSD` | `_unbound` |
 
-
-
-Default value: `$owner`
+</details>
 
 ##### <a name="package_name"></a>`package_name`
 
@@ -1555,15 +1674,41 @@ Data type: `String`
 
 
 
-Default value: `'unbound'`
+Default value: `unbound`
+
+<details>
+  <summary>Hiera overrides in a detailed table</summary>
+
+  | Filename | Interpolations | Value |
+  |----------|----------------|-------|
+  | `data/os/OpenBSD.yaml` | `facts.os.family`: `OpenBSD` | `` |
+
+</details>
+
+##### <a name="package_provider"></a>`package_provider`
+
+Data type: `Optional[String]`
+
+
+
+Default value: ``undef``
+
+<details>
+  <summary>Hiera overrides in a detailed table</summary>
+
+  | Filename | Interpolations | Value |
+  |----------|----------------|-------|
+  | `data/os/Darwin.yaml` | `facts.os.family`: `Darwin` | `macports` |
+
+</details>
 
 ##### <a name="package_ensure"></a>`package_ensure`
 
-Data type: `String[1]`
+Data type: `String`
 
 
 
-Default value: `'installed'`
+Default value: `installed`
 
 ##### <a name="purge_unbound_conf_d"></a>`purge_unbound_conf_d`
 
@@ -1573,13 +1718,22 @@ Data type: `Boolean`
 
 Default value: ``false``
 
+<details>
+  <summary>Hiera overrides in a detailed table</summary>
+
+  | Filename | Interpolations | Value |
+  |----------|----------------|-------|
+  | `data/os/Debian.yaml` | `facts.os.family`: `Debian` | `true` |
+
+</details>
+
 ##### <a name="root_hints_url"></a>`root_hints_url`
 
-Data type: `String[1]`
+Data type: `String`
 
 
 
-Default value: `'https://www.internic.net/domain/named.root'`
+Default value: `https://www.internic.net/domain/named.root`
 
 ##### <a name="runtime_dir"></a>`runtime_dir`
 
@@ -1587,31 +1741,36 @@ Data type: `Stdlib::Absolutepath`
 
 
 
-Default value: `$confdir`
+Default value: `%{hiera('unbound::confdir')}`
 
-##### <a name="auto_trust_anchor_file"></a>`auto_trust_anchor_file`
+<details>
+  <summary>Hiera overrides in a detailed table</summary>
 
-Data type: `Stdlib::Absolutepath`
+  | Filename | Interpolations | Value |
+  |----------|----------------|-------|
+  | `data/os/Suse.yaml` | `facts.os.family`: `Suse` | `/var/lib/unbound` |
+  | `data/os/Debian.yaml` | `facts.os.family`: `Debian` | `/var/lib/unbound` |
+  | `data/os/RedHat.yaml` | `facts.os.family`: `RedHat` | `/var/lib/unbound` |
 
-
-
-Default value: `"${runtime_dir}/root.key"`
-
-##### <a name="anchor_fetch_command"></a>`anchor_fetch_command`
-
-Data type: `String[1]`
-
-
-
-Default value: `"unbound-anchor -a ${auto_trust_anchor_file}"`
+</details>
 
 ##### <a name="service_name"></a>`service_name`
 
-Data type: `String[1]`
+Data type: `String`
 
 
 
-Default value: `'unbound'`
+Default value: `unbound`
+
+<details>
+  <summary>Hiera overrides in a detailed table</summary>
+
+  | Filename | Interpolations | Value |
+  |----------|----------------|-------|
+  | `data/os/OpenBSD.yaml` | `facts.os.family`: `OpenBSD` | `unbound` |
+  | `data/os/Darwin.yaml` | `facts.os.family`: `Darwin` | `org.macports.unbound` |
+
+</details>
 
 ##### <a name="service_hasstatus"></a>`service_hasstatus`
 
@@ -1627,7 +1786,7 @@ Data type: `Enum['running', 'stopped']`
 
 
 
-Default value: `'running'`
+Default value: `running`
 
 ##### <a name="service_enable"></a>`service_enable`
 
@@ -1639,23 +1798,47 @@ Default value: ``true``
 
 ##### <a name="validate_cmd"></a>`validate_cmd`
 
-Data type: `String[1]`
+Data type: `String`
 
 
 
-Default value: `'/usr/sbin/unbound-checkconf %'`
+Default value: `/usr/sbin/unbound-checkconf %`
+
+<details>
+  <summary>Hiera overrides in a detailed table</summary>
+
+  | Filename | Interpolations | Value |
+  |----------|----------------|-------|
+  | `data/os/Solaris/SmartOS.yaml` | `facts.os.family`: `Solaris`<br>`facts.os.release.major`: `SmartOS` | `/opt/local/sbin/unbound-checkconf %` |
+  | `data/os/OpenBSD.yaml` | `facts.os.family`: `OpenBSD` | `/usr/sbin/unbound-checkconf %` |
+  | `data/os/FreeBSD.yaml` | `facts.os.family`: `FreeBSD` | `/usr/local/sbin/unbound-checkconf %` |
+  | `data/os/RedHat.yaml` | `facts.os.family`: `RedHat` | `/usr/sbin/unbound-checkconf %` |
+
+</details>
 
 ##### <a name="restart_cmd"></a>`restart_cmd`
 
-Data type: `String[1]`
+Data type: `String`
 
 
 
-Default value: `"/bin/systemctl restart ${service_name}"`
+Default value: `/bin/systemctl restart %{hiera('unbound::service_name')}`
+
+<details>
+  <summary>Hiera overrides in a detailed table</summary>
+
+  | Filename | Interpolations | Value |
+  |----------|----------------|-------|
+  | `data/os/RedHat/6.yaml` | `facts.os.family`: `RedHat`<br>`facts.os.release.major`: `6` | `/usr/bin/service %{hiera('unbound::service_name')} restart` |
+  | `data/os/Solaris/SmartOS.yaml` | `facts.os.family`: `Solaris`<br>`facts.os.release.major`: `SmartOS` | `/usr/sbin/svcadm restart %{hiera('unbound::service_name')}` |
+  | `data/os/OpenBSD.yaml` | `facts.os.family`: `OpenBSD` | `/usr/sbin/rcctl restart %{lookup('unbound::service_name')}` |
+  | `data/os/FreeBSD.yaml` | `facts.os.family`: `FreeBSD` | `/usr/sbin/service %{hiera('unbound::service_name')} restart` |
+
+</details>
 
 ##### <a name="custom_server_conf"></a>`custom_server_conf`
 
-Data type: `Array[String[1]]`
+Data type: `Array[String]`
 
 
 
@@ -1679,11 +1862,11 @@ Default value: ``undef``
 
 ##### <a name="dns64_prefix"></a>`dns64_prefix`
 
-Data type: `String[1]`
+Data type: `Optional[String]`
 
 
 
-Default value: `'64:ff9b::/96'`
+Default value: `64:ff9b::/96`
 
 ##### <a name="dns64_synthall"></a>`dns64_synthall`
 
@@ -1695,19 +1878,19 @@ Default value: ``false``
 
 ##### <a name="send_client_subnet"></a>`send_client_subnet`
 
-Data type: `Array[String[1]]`
+Data type: `Optional[Array[String]]`
 
 
 
-Default value: `[]`
+Default value: ``undef``
 
 ##### <a name="client_subnet_zone"></a>`client_subnet_zone`
 
-Data type: `Array[String[1]]`
+Data type: `Optional[Array[String]]`
 
 
 
-Default value: `[]`
+Default value: ``undef``
 
 ##### <a name="client_subnet_always_forward"></a>`client_subnet_always_forward`
 
@@ -1807,15 +1990,15 @@ Default value: ``false``
 
 ##### <a name="ipsecmod_whitelist"></a>`ipsecmod_whitelist`
 
-Data type: `Array[String[1]]`
+Data type: `Optional[Array[String]]`
 
 
 
-Default value: `[]`
+Default value: ``undef``
 
 ##### <a name="backend"></a>`backend`
 
-Data type: `Optional[String[1]]`
+Data type: `Optional[String]`
 
 
 
@@ -1823,19 +2006,19 @@ Default value: ``undef``
 
 ##### <a name="secret_seed"></a>`secret_seed`
 
-Data type: `String[1]`
+Data type: `String`
 
 
 
-Default value: `'default'`
+Default value: `default`
 
 ##### <a name="redis_server_host"></a>`redis_server_host`
 
-Data type: `String[1]`
+Data type: `String`
 
 
 
-Default value: `'127.0.0.1'`
+Default value: `127.0.0.1`
 
 ##### <a name="redis_server_port"></a>`redis_server_port`
 
@@ -1859,7 +2042,7 @@ Data type: `Stdlib::Absolutepath`
 
 
 
-Default value: `"${confdir}/unbound.conf.d"`
+Default value: `%{hiera('unbound::confdir')}/unbound.conf.d`
 
 ### <a name="unboundremote"></a>`unbound::remote`
 
