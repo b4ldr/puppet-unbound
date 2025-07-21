@@ -220,6 +220,7 @@
 # @param edns_client_string see https://nlnetlabs.nl/documentation/unbound/unbound.conf/
 # @param edns_client_string_opcode see https://nlnetlabs.nl/documentation/unbound/unbound.conf/
 # @param infra_keep_probing see https://nlnetlabs.nl/documentation/unbound/unbound.conf/
+# @param http-notls-downstream see https://nlnetlabs.nl/documentation/unbound/unbound.conf/
 class unbound (
   Boolean                                       $manage_service                  = true,
   Integer[0,5]                                  $verbosity                       = 1,
@@ -440,6 +441,7 @@ class unbound (
   Hash[Stdlib::IP::Address, String[1]]          $edns_client_tag                 = {},     # version 1.13.0
   Integer[1,635535]                             $edns_client_string_opcode       = 65001,
   Boolean                                       $infra_keep_probing              = false,  # version 1.13.0
+  Boolean                                       $http_notls_downstream           = false,  # version 1.13.0
 ) {
   $_base_dirs = [$confdir, $conf_d, $keys_d, $runtime_dir]
   $_piddir = if $pidfile { dirname($pidfile) } else { undef }
