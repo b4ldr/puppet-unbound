@@ -85,6 +85,7 @@ server:
 <%= print_config('edns-tcp-keepalive', @edns_tcp_keepalive, '1.8.0') -%>
 <%= print_config('edns-tcp-keepalive-timeout', @edns_tcp_keepalive_timeout, '1.8.0') -%>
 <%= print_config('tcp-upstream', @tcp_upstream) -%>
+<%= print_config('infra-keep-probing', @infra_keep_probing, '1.13.0') -%>
 <%= print_config('udp-upstream-without-downstream', @udp_upstream_without_downstream, '1.6.7') -%>
 <%= print_config('tls-upstream', @tls_upstream, '1.7.0') -%>
 <%= print_config('tls-cert-bundle', @tls_cert_bundle, '1.7.0') -%>

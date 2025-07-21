@@ -219,6 +219,7 @@
 # @param http_nodelay see https://nlnetlabs.nl/documentation/unbound/unbound.conf/
 # @param edns_client_string see https://nlnetlabs.nl/documentation/unbound/unbound.conf/
 # @param edns_client_string_opcode see https://nlnetlabs.nl/documentation/unbound/unbound.conf/
+# @param infra_keep_probing see https://nlnetlabs.nl/documentation/unbound/unbound.conf/
 class unbound (
   Boolean                                       $manage_service                  = true,
   Integer[0,5]                                  $verbosity                       = 1,
@@ -438,6 +439,7 @@ class unbound (
   Boolean                                       $http_nodelay                    = true,   # version 1.12.0
   Hash[Stdlib::IP::Address, String[1]]          $edns_client_tag                 = {},     # version 1.13.0
   Integer[1,635535]                             $edns_client_string_opcode       = 65001,
+  Boolean                                       $infra_keep_probing              = false,  # version 1.13.0
 ) {
   $_base_dirs = [$confdir, $conf_d, $keys_d, $runtime_dir]
   $_piddir = if $pidfile { dirname($pidfile) } else { undef }
@@ -546,7 +548,10 @@ class unbound (
     if $update_root_hints == 'present' {
       systemd::timer { 'roothints.timer':
         timer_content   => file("${module_name}/roothints.timer"),
-        service_content => epp("${module_name}/roothints.service.epp", { 'hints_file' => $hints_file, 'root_hints_url' => $root_hints_url, 'fetch_client' => $fetch_client }),
+        service_content => epp(
+          "${module_name}/roothints.service.epp",
+          { 'hints_file' => $hints_file, 'root_hints_url' => $root_hints_url, 'fetch_client' => $fetch_client }
+        ),
         active          => true,
         enable          => true,
       }
