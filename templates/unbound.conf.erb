@@ -102,6 +102,12 @@ server:
 <%= print_config('http-nodelay', @http_nodelay, '1.12.0') -%>
 <%= print_config('use-systemd', @use_systemd) -%>
 <%= print_config('do-daemonize', @do_daemonize) -%>
+<% unless scope.call_function('versioncmp', [unbound_version, '1.12.0']) < 0 -%>
+<%   @edns_client_tag.each_pair do |ip, tag| -%>
+  edns-client-tag: <%= ip %> "<%= tag %>"
+<%   end -%>
+<% end -%>
+<%= print_config('edns-client-string-opcode', @edns_client_string_opcode, '1.13.0') -%>
 <% @access.each do |acc| -%>
   <%- if acc.include? " " -%>
   access-control: <%= acc %>

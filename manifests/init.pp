@@ -217,6 +217,8 @@
 # @param http_query_buffer_size see https://nlnetlabs.nl/documentation/unbound/unbound.conf/
 # @param http_response_buffer_size see https://nlnetlabs.nl/documentation/unbound/unbound.conf/
 # @param http_nodelay see https://nlnetlabs.nl/documentation/unbound/unbound.conf/
+# @param edns_client_string see https://nlnetlabs.nl/documentation/unbound/unbound.conf/
+# @param edns_client_string_opcode see https://nlnetlabs.nl/documentation/unbound/unbound.conf/
 class unbound (
   Boolean                                       $manage_service                  = true,
   Integer[0,5]                                  $verbosity                       = 1,
@@ -434,6 +436,8 @@ class unbound (
   Integer[1,65535]                              $http_query_buffer_size          = 4096,   # version 1.12.0
   Integer[1,65535]                              $http_response_buffer_size       = 4096,   # version 1.12.0
   Boolean                                       $http_nodelay                    = true,   # version 1.12.0
+  Hash[Stdlib::IP::Address, String[1]]          $edns_client_tag                 = {},     # version 1.13.0
+  Integer[1,635535]                             $edns_client_string_opcode       = 65001,
 ) {
   $_base_dirs = [$confdir, $conf_d, $keys_d, $runtime_dir]
   $_piddir = if $pidfile { dirname($pidfile) } else { undef }
