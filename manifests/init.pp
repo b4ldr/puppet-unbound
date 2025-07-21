@@ -210,6 +210,13 @@
 # @param rpzs see https://nlnetlabs.nl/documentation/unbound/unbound.conf/
 # @param unbound_version the unbound_version to use, we can caluclate from the fact but
 #   specifying reduces the number of puppet runs
+# @param tls_service_key see https://nlnetlabs.nl/documentation/unbound/unbound.conf/
+# @param tls_service_pem see https://nlnetlabs.nl/documentation/unbound/unbound.conf/
+# @param http_port see https://nlnetlabs.nl/documentation/unbound/unbound.conf/
+# @param http_max_streams see https://nlnetlabs.nl/documentation/unbound/unbound.conf/
+# @param http_query_buffer_size see https://nlnetlabs.nl/documentation/unbound/unbound.conf/
+# @param http_response_buffer_size see https://nlnetlabs.nl/documentation/unbound/unbound.conf/
+# @param http_nodelay see https://nlnetlabs.nl/documentation/unbound/unbound.conf/
 class unbound (
   Boolean                                       $manage_service                  = true,
   Integer[0,5]                                  $verbosity                       = 1,
@@ -420,6 +427,13 @@ class unbound (
   Optional[String[1]]                           $hints_file_content              = undef,
   Hash[String[1], Unbound::Rpz]                 $rpzs                            = {},
   Optional[String[1]]                           $unbound_version                 = $facts['unbound_version'],
+  Optional[Stdlib::Absolutepath]                $tls_service_key                 = undef,  # version 1.12.0
+  Optional[Stdlib::Absolutepath]                $tls_service_pem                 = undef,  # version 1.12.0
+  Stdlib::Port                                  $http_port                       = 8080,   # version 1.12.0
+  Integer[1,65535]                              $http_max_streams                = 100,    # version 1.12.0
+  Integer[1,65535]                              $http_query_buffer_size          = 4096,   # version 1.12.0
+  Integer[1,65535]                              $http_response_buffer_size       = 4096,   # version 1.12.0
+  Boolean                                       $http_nodelay                    = true,   # version 1.12.0
 ) {
   $_base_dirs = [$confdir, $conf_d, $keys_d, $runtime_dir]
   $_piddir = if $pidfile { dirname($pidfile) } else { undef }

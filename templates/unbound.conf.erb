@@ -94,6 +94,12 @@ server:
 <%= print_config('ssl-port', @ssl_port, '1.7.0') -%>
 <%= print_config('tls-ciphers', @tls_ciphers, '1.9.0') -%>
 <%= print_config('tls-ciphersuites', @tls_ciphersuites, '1.9.0') -%>
+<%= print_config('tls-service-key', @tls_service_key, '1.12.0') -%>
+<%= print_config('tls-service-pem', @tls_service_pem, '1.12.0') -%>
+<%= print_config('http-max-streams', @http_max_streams, '1.12.0') -%>
+<%= print_config('http-query-buffer-size', @http_query_buffer_size, '1.12.0') -%>
+<%= print_config('http-response-buffer-size', @http_response_buffer_size, '1.12.0') -%>
+<%= print_config('http-nodelay', @http_nodelay, '1.12.0') -%>
 <%= print_config('use-systemd', @use_systemd) -%>
 <%= print_config('do-daemonize', @do_daemonize) -%>
 <% @access.each do |acc| -%>
